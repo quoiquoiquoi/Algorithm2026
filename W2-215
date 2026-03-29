@@ -1,0 +1,17 @@
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        // 建立一個小頂堆 (最小的在最上面)
+        priority_queue<int, vector<int>, greater<int>> minHeap;
+
+        for (int x : nums) {
+            minHeap.push(x);
+            // 如果堆超過 k 個，就把最小的踢掉
+            if (minHeap.size() > k) {
+                minHeap.pop();
+            }
+        }
+        // 留下來的 k 個是最大的，而堆頂就是這 k 個中最小的（即第 k 大）
+        return minHeap.top();
+    }
+};
