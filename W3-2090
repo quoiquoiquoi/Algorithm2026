@@ -1,0 +1,31 @@
+class Solution {
+public:
+    vector<int> getAverages(vector<int>& nums, int k) {
+    int n = nums.size();
+    int len = 2 * k + 1;
+    vector<int> res(n, -1); // 預設全部填 -1
+
+    // 如果陣列長度根本不夠開一個視窗，直接回傳全 -1
+    if (n < len) return res;
+
+    //int的上限大約是2*10^9，而這題的總和最高是10^10。
+    long long window_sum = 0;
+    // 1. 先算出第一個視窗的和
+    for (int i = 0; i < len; i++) {
+        window_sum += nums[i];
+    }
+    res[k] = window_sum / len;
+
+    // 2. 開始滑動：i 是「右邊新進來」的索引
+    for (int i = len; i < n; i++) {
+        // 右進左出
+        window_sum += nums[i];          // 加右邊
+        window_sum -= nums[i - len];    // 減左邊
+        
+        // 填入中心點：中心點剛好會是 i - k
+        res[i - k] = window_sum / len;
+    }
+
+    return res;
+    }
+};
