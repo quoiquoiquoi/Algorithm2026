@@ -1,0 +1,38 @@
+class Solution {
+public:
+    bool checkInclusion(string s1, string s2) {
+        int n1 = s1.length();
+        int n2 = s2.length();
+        
+        // 如果 s1 比 s2 還長，絕對不可能包含
+        if (n1 > n2) return false;
+
+        // 建立兩個頻率表a-z
+        vector<int> s1_count(26, 0);
+        vector<int> window_count(26, 0);
+
+        // 初始化：先把 s1 數完，順便把 s2 的第一個「視窗」也數完
+        //減ASCII碼a算出字母出現在頻率表哪些位置
+        //++算出字母出現次數
+        for (int i = 0; i < n1; i++) {
+            s1_count[s1[i] - 'a']++;
+            window_count[s2[i] - 'a']++;
+        }
+
+        // 開始移動視窗
+        // i 表即將進來的右邊邊界
+        for (int i = n1; i < n2; i++) {
+            // 先檢查目前的視窗成不成立
+            if (s1_count == window_count) return true;
+
+            // 如果不成立，視窗往右滑一格：
+            // [右進] 加入新的字元
+            window_count[s2[i] - 'a']++;
+            // [左出] 扣掉最左邊離開的字元（i - n1 就是視窗的最左端）
+            window_count[s2[i - n1] - 'a']--;
+        }
+
+        // 3. 最後一個視窗跑完迴圈後還沒比對到，要補比對一次
+        return s1_count == window_count;
+    }
+};
