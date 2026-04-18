@@ -1,0 +1,24 @@
+class Solution {
+public:
+    int twoCitySchedCost(vector<vector<int>>& costs) {
+        // 1. 按照「去 A 市比去 B 市省多少錢」來排序
+        // 差值 = costA - costB
+        //Lambda 函式：[] (捕獲列表)：告訴電腦這個小函式要不要用外面的變數。這裡留空，表示不需要。
+        //抓「兩個人」出來比較
+        sort(costs.begin(), costs.end(), [](const vector<int>& a, const vector<int>& b) {
+            //bool
+            return (a[0] - a[1]) < (b[0] - b[1]);
+        });
+
+        int totalCost = 0;
+        int n = costs.size() / 2;
+
+        // 2. 排序後的前一半人去 A 市，後一半人去 B 市
+        for (int i = 0; i < n; i++) {
+            totalCost += costs[i][0];     // 前 n 人去 A
+            totalCost += costs[i + n][1]; // 後 n 人去 B
+        }
+
+        return totalCost;
+    }
+};
