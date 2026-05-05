@@ -1,0 +1,25 @@
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 1) return nums[0]; // 只有一間房，直接搶
+        if (n == 2) return max(nums[0], nums[1]); // 只有兩間，選大的搶
+
+        // 拆解成兩個線性問題
+        return max(robRange(nums, 0, n - 2), 
+                   robRange(nums, 1, n - 1));
+    }
+
+private:
+    int robRange(vector<int>& nums, int start, int end) {
+        int pre = 0; // 相當於 dp[i-2]
+        int cur = 0; // 相當於 dp[i-1]
+        
+        for (int i = start; i <= end; i++) {
+            int temp = cur;
+            cur = max(cur, pre + nums[i]);
+            pre = temp;
+        }
+        return cur;
+    }
+};
