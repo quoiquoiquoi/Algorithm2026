@@ -1,0 +1,46 @@
+#include <vector>
+
+class Solution {
+public:
+    bool possibleBipartition(int n, std::vector<std::vector<int>>& dislikes) {
+        // Step 1: 建置鄰接表 (使用 1-indexed，所以大小為 n + 1)
+        std::vector<std::vector<int>> graph(n + 1);
+        for (const auto& d : dislikes) {
+            graph[d[0]].push_back(d[1]);
+            graph[d[1]].push_back(d[0]); // 無向圖，雙向都要加邊
+        }
+
+        // Step 2: 建立顏色 vector，0 表示未染色，1 表示第一組，-1 表示第二組
+        std::vector<int> colors(n + 1, 0);
+
+        // Step 3: 遍歷每個人，處理圖可能不連通的情況
+        for (int i = 1; i <= n; ++i) {
+            // 如果這個人還沒被染色，就從他開始 DFS 染色。如果染出衝突，直接回傳 false
+            if (colors[i] == 0 && !dfs(graph, colors, i, 1)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+private:
+    bool dfs(const std::vector<std::vector<int>>& graph, std::vector<int>& colors, int node, int color) {
+        // 給當前節點染色
+        colors[node] = color;
+
+        // 檢查所有討厭的人（鄰居）
+        for (int neighbor : graph[node]) {
+            // 如果鄰居已經染過色，且顏色跟自己一樣，代表發生衝突，無法二分
+            if (colors[neighbor] == color) {
+                return false;
+            }
+            // 如果鄰居還沒染色，就將他染成相反的顏色 (-color)，並繼續 DFS
+            if (colors[neighbor] == 0 && !dfs(graph, colors, neighbor, -color)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+};
